@@ -27,6 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = 'frontpage'
+
 
 # Application definition
 
@@ -39,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'apps.core',
-    'apps.postitprofiel',
+    'apps.postitprofile',
     
 ]
 
