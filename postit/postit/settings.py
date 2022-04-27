@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'feed'
 LOGOUT_REDIRECT_URL = 'frontpage'
 
 
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.humanize',
     'django.contrib.staticfiles',
 
     'apps.feed',
@@ -124,6 +126,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR/'static'
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

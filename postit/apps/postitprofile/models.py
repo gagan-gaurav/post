@@ -4,6 +4,6 @@ from django.contrib.auth.models import User
 # Create your models here.
 class PostitProfile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
-	follow = models.ManyToManyField('self', related_name = "followed_by", symmetrical = False)
+	follows = models.ManyToManyField('self', related_name = "followed_by", symmetrical = False)
 
-User.postitprofile = property(lambda u: PostitProfile.objects.get_or_create(user=u)[0])
+User.postitprofile = property(lambda u:PostitProfile.objects.get_or_create(user=u)[0])

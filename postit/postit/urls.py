@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views
 from apps.core.views import frontpage, signup
+from apps.feed.views import feed
+from apps.feed.api import api_add_post
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +26,14 @@ urlpatterns = [
     path('signup/', signup, name = "signup"),
     path('logout/', views.LogoutView.as_view(), name = "logout"),
     path('login/', views.LoginView.as_view(template_name = 'core/login.html'), name = 'login'),
+
+
+    ## main page here
+    path('feed/', feed, name = 'feed'),
+
+    ## API
+
+    path('api/add_post/', api_add_post, name = 'api_add_post'),
+
 ]
+
