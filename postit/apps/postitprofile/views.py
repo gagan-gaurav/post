@@ -7,8 +7,18 @@ from .forms import postitprofileform
 def postitprofile(request, username):
 	user = get_object_or_404(User, username=username)
 
+	psts= user.posts.all()
+	for p in psts:
+		likes = p.likes.filter(created_by_id = request.user.id)
+
+		if likes.count() > 0:
+			p.liked = True
+		else:
+			p.liked = False
+
 	context = {
-		'user' : user
+		'user' : user,
+		'posts' : psts
 	}
 
 	return render(request, 'postitprofile/postitprofile.html', context)

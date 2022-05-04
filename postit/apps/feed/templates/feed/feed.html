@@ -34,7 +34,7 @@
 							<div class="media-content">
 								<div class="content">
 									<p>
-										<strong> [[ post.poster ]] </strong>
+										<strong> <a href = "{% url 'postitprofile' request.user.username %}">  [[ post.poster ]] </a></strong>
 										<small> [[ post.created_at ]] </small>
 										<br>
 										[[ post.body ]]
@@ -58,10 +58,14 @@
 								<div class="media-content">
 									<div class="content">
 										<p>
-											<strong> {{ post.created_by.username }} </strong>
+											<strong> <a href = "{% url 'postitprofile' post.created_by.username %}"> {{ post.created_by.username }} </a> </strong>
 											<small> {{ post.created_at | naturaltime }} </small>
 											<br>
-											{{post.body}}
+											{{ post.body }}
+											<br>
+											<a @click="LikePost({{ post.id }})" v-if="!liked_posts.includes({{ post.id }})"> Like </a>
+											<span v-if="liked_posts.includes({{ post.id }})"> Liked </span>
+											<small id = "likes-{{ post.id }}"> {{ post.likes.count }} likes </small>
 										</p>
 									</div>
 								</div>
@@ -85,10 +89,38 @@
 				body: '',
 				poster: '{{ request.user.username }}',
 				created_at: 'Now',
-				avatar: '{% if request.user.postitprofile.avatar %} {{ request.user.postitprofile.avatar.url }} {% endif %}'
+				avatar: '{% if request.user.postitprofile.avatar %} {{ request.user.postitprofile.avatar.url }} {% endif %}',
+				liked_posts: [{% for post in posts %}{% if post.liked %}{{ post.id }}, {%endif%}{%endfor%}]
 			}
 		},
 		methods : {
+			LikePost(post_id){
+				this.liked_posts.push(parseInt(post_id));
+
+				var post = {
+					'post_id' : post_id
+				};
+
+				fetch('/api/add_like/', {
+					method : 'POST',
+					headers: {
+						'Content-Type' : 'application/json',
+						'X-CSRFToken' : '{{ csrf_token }}'
+					},
+					credentials: 'same-origin',
+					body: JSON.stringify(post)
+				})
+				.then((response) => {
+					console.log(response);
+				})
+				.catch((error) => {
+					console.log(error);
+				})
+
+				const el = document.getElementById('likes-' + post_id);
+				const likes = parseInt(el.innerHTML.split(' ')[0] + 1);
+				el.innerHTML = likes + 'likes';
+			},
 			submit_post() {
 				console.log('submit_post');
 

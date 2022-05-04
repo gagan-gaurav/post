@@ -21,7 +21,7 @@ from django.urls import path
 from django.contrib.auth import views
 from apps.core.views import frontpage, signup
 from apps.feed.views import feed, search
-from apps.feed.api import api_add_post
+from apps.feed.api import api_add_post, api_add_like
 from apps.postitprofile.views import postitprofile, follow_poster, unfollow_poster, followers, follows, edit_profile
 
 urlpatterns = [
@@ -47,6 +47,7 @@ urlpatterns = [
     ## API
 
     path('api/add_post/', api_add_post, name = 'api_add_post'),
+    path('api/add_like/', api_add_like, name = 'api_add_like'),
 
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 
