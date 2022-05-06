@@ -38,6 +38,10 @@
 										<small> [[ post.created_at ]] </small>
 										<br>
 										[[ post.body ]]
+										<br>
+										<a @click="LikePost(post.id)" v-if="!liked_posts.includes(post.id)"> Like </a>
+										<span v-if="liked_posts.includes(post.id)"> Liked </span>
+										<small v-bind:id="dynamicid">0 likes</small>
 									</p>
 								</div>
 							</div>
@@ -65,7 +69,7 @@
 											<br>
 											<a @click="LikePost({{ post.id }})" v-if="!liked_posts.includes({{ post.id }})"> Like </a>
 											<span v-if="liked_posts.includes({{ post.id }})"> Liked </span>
-											<small id = "likes-{{ post.id }}"> {{ post.likes.count }} likes </small>
+											<small id = "likes-{{ post.id }}">{{ post.likes.count }} likes</small>
 										</p>
 									</div>
 								</div>
@@ -86,11 +90,13 @@
 		data(){
 			return {
 				posts: [],
+				id: -1,
 				body: '',
 				poster: '{{ request.user.username }}',
 				created_at: 'Now',
 				avatar: '{% if request.user.postitprofile.avatar %} {{ request.user.postitprofile.avatar.url }} {% endif %}',
-				liked_posts: [{% for post in posts %}{% if post.liked %}{{ post.id }}, {%endif%}{%endfor%}]
+				liked_posts: [{% for post in posts %}{% if post.liked %}{{ post.id }}, {%endif%}{%endfor%}],
+				dynamicid: ''
 			}
 		},
 		methods : {
@@ -117,11 +123,17 @@
 					console.log(error);
 				})
 
-				const el = document.getElementById('likes-' + post_id);
-				const likes = parseInt(el.innerHTML.split(' ')[0] + 1);
-				el.innerHTML = likes + 'likes';
+				if(this.id == post_id){
+					const el = document.getElementById('likesnow-' + post_id);
+					const likes = parseInt(el.innerHTML.split(' ')[0]) + 1;
+					el.innerHTML = likes + ' likes';
+				}else{
+					const el = document.getElementById('likes-' + post_id);
+					const likes = parseInt(el.innerHTML.split(' ')[0]) + 1;
+					el.innerHTML = likes + ' likes';
+				}
 			},
-			submit_post() {
+			async submit_post() {
 				console.log('submit_post');
 
 				if(this.body.length > 0){
@@ -132,10 +144,10 @@
 						'avatar': this.avatar
 					};
 
-					this.posts.unshift(post);
+//					this.posts.unshift(post);
 					//send to backend
 
-					fetch('/api/add_post/',{
+					await fetch('/api/add_post/',{
 						method : 'POST',
 						headers: {
 							'Content-Type' : 'application/json',
@@ -145,7 +157,20 @@
 						body: JSON.stringify(post)
 					})
 					.then((response) => {
-						console.log(response);
+						return response.json();
+					})
+					.then((data) => {
+						this.dynamicid = "likesnow-" + data.post_id; 
+						this.id = data.post_id;
+						var post1 = {
+							'body' : this.body,
+							'poster' : this.poster,
+							'created_at': this.created_at,
+							'avatar': this.avatar,
+							'id': data.post_id
+						};
+						
+						this.posts.unshift(post1);
 					})
 					.catch((error) => {
 						console.log(error);

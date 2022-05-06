@@ -10,7 +10,7 @@ def api_add_post(request):
 	data = json.loads(request.body)
 	body = data['body']
 	post_data = post.objects.create(body = body, created_by = request.user)
-	return JsonResponse({'success' : True})
+	return JsonResponse({'success' : True, 'post_id': post_data.id})
 
 
 @login_required

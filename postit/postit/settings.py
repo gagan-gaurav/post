@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'apps.feed',
     'apps.core',
     'apps.postitprofile',
+    'apps.conversation',
     
 ]
 
